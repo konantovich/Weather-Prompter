@@ -10,13 +10,16 @@ import UIKit
 class ListTableViewController: UITableViewController {
     
     
-    var emptyCity = WeatherMain()
+    var emptyCity = WeatherModel()
     
-    var citiesArray = [WeatherMain]()
+    var citiesArray = [WeatherModel]()
     var nameCitiesArray = ["Москва", "Киев", "Берлин", "Харьков", "Лондон"]
     var newCity: String = ""
     
-    var filterCityArray = [WeatherMain]()
+    var cityWeather = CitiesWeatherManager()
+    
+    
+    var filterCityArray = [WeatherModel]()
     let searchController = UISearchController(searchResultsController: nil) //отображение строки поиска в этом же VC
     
     //когда обращаемся к searchBar, если текст уже введен то переменная будет меняется, если нет то просто выходим и false
@@ -39,6 +42,8 @@ class ListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         let defaults = UserDefaults.standard
         
         let myarray = defaults.stringArray(forKey: "SavedStringArray") ?? ["Test", "Test2"]
@@ -58,7 +63,7 @@ class ListTableViewController: UITableViewController {
             
         }
        
-        addCities()
+        //addCities()
        
         
         
@@ -77,25 +82,29 @@ class ListTableViewController: UITableViewController {
        
     }
     
-    //получили координаты и еще раз привязали правильное имя города
     func addCities () {
-        getCityWeather(citiesArray: self.nameCitiesArray) { (index, weatherMain) in
-            
-          
-            
-           
-            DispatchQueue.main.async { //так как таблица у нас прогружается раньше чем мы получаем данные, добавили обновление таблицы в основной поток
-                print(self.nameCitiesArray)
-               
-              
-               
-                self.citiesArray[index] = weatherMain
-                self.citiesArray[index].name = self.nameCitiesArray[index]
-                self.tableView.reloadData()
-            }
-            
-        }
+        
     }
+    
+//    //получили координаты и еще раз привязали правильное имя города
+//    func addCities () {
+//        getCityWeather(citiesArray: self.nameCitiesArray) { (index, weatherMain) in
+//
+//
+//
+//
+//            DispatchQueue.main.async { //так как таблица у нас прогружается раньше чем мы получаем данные, добавили обновление таблицы в основной поток
+//                print(self.nameCitiesArray)
+//
+//
+//
+//                self.citiesArray[index] = weatherMain
+//                self.citiesArray[index].name = self.nameCitiesArray[index]
+//                self.tableView.reloadData()
+//            }
+//
+//        }
+//    }
     
     
     //MARK: - Table view data source
@@ -112,7 +121,7 @@ class ListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as! ListCell
         
-        var weather = WeatherMain()
+        var weather = WeatherModel()
         
         
         
@@ -151,7 +160,7 @@ class ListTableViewController: UITableViewController {
           
             
             //print(self.nameCitiesArray)
-            self.addCities()
+         //   self.addCities()
             print("Добавили новый город:" + self.newCity)
             
             
@@ -186,6 +195,12 @@ class ListTableViewController: UITableViewController {
                 } else {
                     self.citiesArray.remove(at: index)
                     self.nameCitiesArray.remove(at: index)
+                    
+                    let defaults = UserDefaults.standard
+                    defaults.set(self.nameCitiesArray, forKey: "SavedStringArray")
+                    defaults.synchronize()
+                    
+                    
                 }
                 
             }

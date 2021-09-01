@@ -8,7 +8,7 @@
 import UIKit
 
 class InfoViewController: UIViewController {
-
+    
     @IBOutlet weak var imageView: UIView!
     
     @IBOutlet weak var nameLabel: UILabel!
@@ -20,9 +20,13 @@ class InfoViewController: UIViewController {
     @IBOutlet weak var averageTemp: UILabel!
     
     @IBOutlet weak var testImage: UIImageView!
-    var weatherModel: WeatherMain?
+    var weatherModel: WeatherModel?
+    var citiesManager = CitiesWeatherManager()
     
     let imageCell = ["1", "2", "3"]
+    
+    var nameCities = ""
+    var nameCitiesArray = ["Москва", "Киев", "Берлин", "Харьков", "Лондон"]
     
     var currentColor = 0
     var colors = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green]
@@ -31,88 +35,42 @@ class InfoViewController: UIViewController {
     
     @IBOutlet weak var clotheCollectionView: UICollectionView!
     
-
-
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        //nameLabel.text = weatherModel?.name
-      //  print(weatherModel?.name)
         
-       
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.init(rawValue: "red"), object: nil)
+        
+//        getWeatherForCity(cityName: "Киев")
         
         view.addVerticalGradientLayer(topColor: primaryColor, bottomColor: secondaryColor)
         
         imageView.backgroundColor = .none
         clotheCollectionView.backgroundColor = .none
         
-        
         self.clotheCollectionView.delegate = self
         self.clotheCollectionView.dataSource = self
-        
-        advice()
-      
-        clotheChangeImage()
-        refreshLabels()
-        
-  
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-       
+        citiesManager.getAllCitiesWeather()
         
     }
     
-    
-    //функция с рекурсией
-    func backgroundColorTimer () {
-        
-        var newPressure = weatherModel?.presureMm
-        
-        currentColor = currentColor + 1
-        
-        if currentColor >= colors.count {
-                    currentColor = 0
-                }
-       
-        
-        //pressureLabel.backgroundColor = colors[currentColor]
-        print("Пошла \(self.currentColor) интерация")
-        
-       
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.2) {
-           
-            self.refreshLabels()
-                self.backgroundColorTimer()
-           
-             }
+    @objc func senderWeather () {
+        nameCitiesArray = citiesManager.citiesArray
+        print(citiesManager.citiesArray)
     }
     
-//    //функция с рекурсией
-//    func backgroundColorTimer () {
-//
-//
-//        currentColor = currentColor + 1
-//
-//        if currentColor >= colors.count {
-//                    currentColor = 0
-//                }
-//
-//        //pressureLabel.backgroundColor = colors[currentColor]
-//        print("Пошла \(self.currentColor) интерация")
-//
-//
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 5.2) {
-//
-//                self.backgroundColorTimer()
-//
-//             }
-//    }
+    // MARK: - Configure View
     
-
-    func refreshLabels () {
+    func refreshLabels() {
+        
         nameLabel.text = weatherModel?.name
         descriptionLabel.text = weatherModel!.weatherDescription
         tempLabel.text = "\(Int((weatherModel?.temp)!))" + "°C" + "\n" + " ощущается как " + "\(Int((weatherModel?.feelsLike)!))" + "°C"
@@ -124,7 +82,7 @@ class InfoViewController: UIViewController {
         
         windSpeedLabel.backgroundColor = windIndicator(wind: Int(weatherModel?.windSpeed ?? 10))
         humidity.backgroundColor = weatherHumidity(weatherHumidity: weatherModel?.humidity ?? 100)
-  
+        
         
         // подключил картинку .png по API ссылке
         let url = URL(string: "https://openweathermap.org/img/wn/\((weatherModel!.conditionCodeIcon))@2x.png")
@@ -134,41 +92,45 @@ class InfoViewController: UIViewController {
             DispatchQueue.main.async {
                 self.testImage.image = UIImage(data: data)
             }
-    }
+        }
     }
     
     
-    func clotheChangeImage () {
-       
-       
-    }
-
 }
 
 
+// MARK: - Networking
+
+extension InfoViewController {
+    
+}
+
+
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 
 //Collection View для отображения одежды
 extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSource  {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if nameLabel.text == "" {
-            self.tempLabel.text = ""
+        
+        if weatherModel == nil {
             return 0
+        } else {
+            return imageCell.count
         }
-        return imageCell.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CollectionViewCell
         
         cell.backgroundColor = .red
-       
-       // cell.clotheImage.image = #imageLiteral(resourceName: "1")
+        
+        // cell.clotheImage.image = #imageLiteral(resourceName: "1")
         cell.layer.cornerRadius = 40
         
         let imageCell = imageCell[indexPath.row]
         
         switch imageCell {
-            case "1":
+        case "1":
             cell.backgroundColor = .none
             cell.clotheImage.image = jacketClotheTemperature(temp: Double(weatherModel!.feelsLike))
         case "2":
@@ -180,7 +142,7 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
         default:
             cell.backgroundColor = .green
         }
-       
+        
         
         return cell
     }
@@ -308,15 +270,6 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
         
         return .white
     }
-    
-   
-    
-    
-    
-    
-    
-    
-    
 }
 
 

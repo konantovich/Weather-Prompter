@@ -1,5 +1,5 @@
 //
-//  WeatherMain.swift
+//  WeatherModel.swift
 //  Weather prompter
 //
 //  Created by Antbook on 30.08.2021.
@@ -7,9 +7,7 @@
 
 import Foundation
 
-
-
-struct WeatherMain {
+struct WeatherModel {
     
     var name: String = ""
     var count: Int = 0

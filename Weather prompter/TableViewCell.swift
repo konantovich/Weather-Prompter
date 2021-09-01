@@ -14,7 +14,7 @@ class ListCell: UITableViewCell {
     @IBOutlet weak var statusCityLabel: UILabel!
     @IBOutlet weak var tempLabel: UILabel!
     
-    func configure (weather: WeatherMain) {
+    func configure (weather: WeatherModel) {
        
         nameCityLabel.isHidden = false
         self.nameCityLabel.text = weather.name

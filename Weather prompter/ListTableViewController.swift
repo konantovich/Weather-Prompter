@@ -81,11 +81,7 @@ class ListTableViewController: UITableViewController {
         
        
     }
-    
-    func addCities () {
-        
-    }
-    
+
 //    //получили координаты и еще раз привязали правильное имя города
 //    func addCities () {
 //        getCityWeather(citiesArray: self.nameCitiesArray) { (index, weatherMain) in

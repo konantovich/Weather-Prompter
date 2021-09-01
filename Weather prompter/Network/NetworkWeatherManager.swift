@@ -14,6 +14,7 @@ class NetworkWeatherManager2 {
     
     // MARK: - Public methods
     
+    //берем данные по погоде в зависимости от название города
     func getCityWeather(cityName: String, completionHandler: @escaping (WeatherModel) -> Void) {
         getCoordinateFrom(city: cityName) { (coordinate, error) in//получаем координаты
             guard let coordinate = coordinate, error == nil else {return}
@@ -29,7 +30,7 @@ class NetworkWeatherManager2 {
     
     // MARK: - Private methods
     
-    //получаем ссылку API (открываем url сессию) и подставляем координаты долготы/широты
+    //получаем ссылку API (открываем url сессию) и подставляем координаты долготы/широты и тутже вызываем парсинг(получаем данные города) в зависимости от долготы и широты города
     private func fetchCurrentWeather(latitude: Double, longitude: Double, completionHandler: @escaping (WeatherModel) -> Void) {
            let urlString = "https://api.openweathermap.org/data/2.5/find?lat=\(latitude)&lon=\(longitude)&cnt=10&units=metric&lang=ru&appid=50bb086d1ad4c62c3ce2a0a515596674"
            guard let url = URL(string: urlString) else { return }
@@ -68,7 +69,7 @@ class NetworkWeatherManager2 {
         return nil
     }
     
-    //получаем координаты города
+    //получаем координаты города по названию города
     private func getCoordinateFrom(city: String, completion: @escaping (_ coordinate: CLLocationCoordinate2D?, _ error: Error?)-> ()) {
         CLGeocoder().geocodeAddressString(city) { (placemark, error) in
             completion(placemark?.first?.location?.coordinate, error)

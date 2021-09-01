@@ -25,7 +25,7 @@ class InfoViewController: UIViewController {
     
     let imageCell = ["1", "2", "3"]
     
-    var nameCities = ""
+    var nameCities = "Киев"
     var nameCitiesArray = ["Москва", "Киев", "Берлин", "Харьков", "Лондон"]
     
     var currentColor = 0
@@ -58,13 +58,22 @@ class InfoViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        citiesManager.getAllCitiesWeather()
+        
         
     }
     
     @objc func senderWeather () {
-        nameCitiesArray = citiesManager.citiesArray
-        print(citiesManager.citiesArray)
+        DispatchQueue.global().async(group: citiesManager.dispatchGroup){ [self] in
+            self.nameCitiesArray = citiesManager.citiesArray
+            self.weatherModel = citiesManager.citiesWeather[0]
+            print("adsasd", citiesManager.citiesArray)
+            refreshLabels()
+        }
+
+       
+     //  print(citiesManager.getWeatherForCity(cityName: nameCities))
+        
+        
     }
     
     // MARK: - Configure View

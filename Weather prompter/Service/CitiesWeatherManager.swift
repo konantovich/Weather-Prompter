@@ -11,11 +11,12 @@ import Foundation
 class CitiesWeatherManager {
     
     var citiesWeather: [WeatherModel] = []
-    var dispatchGroup = DispatchGroup()
+    
+   public var dispatchGroup = DispatchGroup()
     
     init() {
         
-      
+        getAllCitiesWeather()
     }
     
     var citiesArray: [String] {
@@ -35,15 +36,22 @@ class CitiesWeatherManager {
         }
     }
     
+    //берем данные по погоде в зависимости от названия города
     func getWeatherForCity(cityName: String) {
         
         NetworkWeatherManager2.shared.getCityWeather(cityName: cityName) { weather in
             
-            var newWeather = weather
-            newWeather.name = cityName
-            self.citiesWeather.append(newWeather)
+            DispatchQueue.global().async(group: self.dispatchGroup) {
+                var newWeather = weather
+                newWeather.name = cityName
+                self.citiesWeather.append(newWeather)
+                
+                
+                NotificationCenter.default.post(name: NSNotification.Name.init("red"), object: self)
+            }
+                
+               
            
-            NotificationCenter.default.post(name: NSNotification.Name.init("red"), object: self)
             
         }
     }
@@ -58,6 +66,6 @@ class CitiesWeatherManager {
         }
     }
     
-
+    
     
 }

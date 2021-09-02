@@ -153,13 +153,6 @@ class ListTableViewController: UITableViewController {
 //            self.citiesManager.citiesArray.append(text)
 //            self.citiesManager.citiesWeather.append(self.emptyCity)
             CitiesWeatherManager.shared.citiesArray.append(text)
-            DispatchQueue.main.async {
-               
-                self.configureData()
-                self.tableView.reloadData()
-            }
-            
-            
         }
         alertController.addTextField { (textField) in
             textField.placeholder = ""

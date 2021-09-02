@@ -41,8 +41,9 @@ class InfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+       
         NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.init(rawValue: "red"), object: nil)
+        
         
 //        getWeatherForCity(cityName: "Киев")
         
@@ -53,6 +54,7 @@ class InfoViewController: UIViewController {
         
         self.clotheCollectionView.delegate = self
         self.clotheCollectionView.dataSource = self
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -63,13 +65,13 @@ class InfoViewController: UIViewController {
     }
     
     @objc func senderWeather () {
-        DispatchQueue.global().async(group: citiesManager.dispatchGroup){ [self] in
+        DispatchQueue.main.async { [self] in
             self.nameCitiesArray = citiesManager.citiesArray
             self.weatherModel = citiesManager.citiesWeather[0]
-            print("adsasd", citiesManager.citiesArray)
+        print("adsasd", citiesManager.citiesWeather[0].feelsLike)
             refreshLabels()
+        
         }
-
        
      //  print(citiesManager.getWeatherForCity(cityName: nameCities))
         

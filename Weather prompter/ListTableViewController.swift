@@ -16,8 +16,9 @@ class ListTableViewController: UITableViewController {
     var nameCitiesArray = ["Москва", "Киев", "Берлин", "Харьков", "Лондон"]
     var newCity: String = ""
     
-    var cityWeather = CitiesWeatherManager()
+    var citiesManager = CitiesWeatherManager()
     
+    var weatherModel: WeatherModel?
     
     var filterCityArray = [WeatherModel]()
     let searchController = UISearchController(searchResultsController: nil) //отображение строки поиска в этом же VC
@@ -42,6 +43,9 @@ class ListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.init(rawValue: "red"), object: nil)
+        
+        
         
         
         let defaults = UserDefaults.standard
@@ -51,6 +55,7 @@ class ListTableViewController: UITableViewController {
         self.nameCitiesArray = myarray
       
        
+        
         
         
        // print(UserSettings.userName)
@@ -81,6 +86,16 @@ class ListTableViewController: UITableViewController {
         
        
     }
+    
+    @objc func senderWeather () {
+        DispatchQueue.main.async { [self] in
+            self.nameCitiesArray = citiesManager.citiesArray
+            self.weatherModel = citiesManager.citiesWeather[0]
+        print("adsasd", citiesManager.citiesWeather[0].feelsLike)
+          
+        
+        }
+       
 
 //    //получили координаты и еще раз привязали правильное имя города
 //    func addCities () {
@@ -100,7 +115,7 @@ class ListTableViewController: UITableViewController {
 //            }
 //
 //        }
-//    }
+    }
     
     
     //MARK: - Table view data source
@@ -110,26 +125,26 @@ class ListTableViewController: UITableViewController {
         if isFiltering {
             return filterCityArray.count
         }
-        return citiesArray.count
+        return nameCitiesArray.count
     }
     
     //настройка ячеек
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as! ListCell
         
-        var weather = WeatherModel()
+       
         
         
         
         if isFiltering {
-            weather = filterCityArray[indexPath.row]
+            weatherModel = filterCityArray[indexPath.row]
             
         } else {
-            weather = citiesArray[indexPath.row]
+            weatherModel = citiesArray[indexPath.row]
         }
         
         
-        cell.configure(weather: weather)
+        cell.configure(weather: weatherModel!)
         return cell
     }
     
@@ -246,4 +261,5 @@ extension ListTableViewController: UISearchResultsUpdating {
     }
     
 }
+
 

@@ -138,7 +138,6 @@
 				A00A000526DD0CDB0039425E /* Main.storyboard */,
 				A00A000A26DD0CDE0039425E /* LaunchScreen.storyboard */,
 				A00A004226DD36110039425E /* CollectionViewCell.swift */,
-				A00A003C26DD12610039425E /* TableViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -196,6 +195,7 @@
 			children = (
 				A00A003E26DD12C70039425E /* InfoViewController.swift */,
 				A00A003A26DD11E80039425E /* ListTableViewController.swift */,
+				A00A003C26DD12610039425E /* TableViewCell.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";

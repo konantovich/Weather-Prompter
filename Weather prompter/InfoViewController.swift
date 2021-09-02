@@ -37,6 +37,12 @@ class InfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+       let historyWeatherUrl = "http://history.openweathermap.org/data/2.5/history/city?lat=41.85&lon=-87.65&appid=50bb086d1ad4c62c3ce2a0a515596674"
+
+
+        
+        
+        
         setupNotifications()
 //        getWeatherForCity(cityName: "Киев")
         
@@ -116,7 +122,7 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if weatherModel == nil {
-            return 0
+            return 3
         } else {
             return imageCell.count
         }
@@ -130,18 +136,19 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
         // cell.clotheImage.image = #imageLiteral(resourceName: "1")
         cell.layer.cornerRadius = 40
         
+        
         let imageCell = imageCell[indexPath.row]
         
         switch imageCell {
         case "1":
             cell.backgroundColor = .none
-            cell.clotheImage.image = jacketClotheTemperature(temp: Double(weatherModel!.feelsLike))
+            cell.clotheImage.image = jacketClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
         case "2":
             cell.backgroundColor = .none
-            cell.clotheImage.image = pantsClotheTemperature(temp: Double(weatherModel!.feelsLike))
+            cell.clotheImage.image = pantsClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
         case "3":
             cell.backgroundColor = .none
-            cell.clotheImage.image = bootsClotheTemperature(temp: Double(weatherModel!.feelsLike))
+            cell.clotheImage.image = bootsClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
         default:
             cell.backgroundColor = .green
         }
@@ -160,7 +167,7 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
             
         case 0..<23:
             return #imageLiteral(resourceName: "clothes")
-        case 23..<40:
+        case 23..<100:
             return #imageLiteral(resourceName: "tshirt")
         default:
             break

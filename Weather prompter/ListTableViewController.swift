@@ -31,17 +31,17 @@ class ListTableViewController: UITableViewController {
     }
     
     
-   
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupNotifications()
-       
-        //addCities()
-       
         
+        //addCities()
+        
+
         
         //   networkWeatherManager.fetchWeather { (weatherMain) in print(weatherMain)}
         print("api.openweathermap.org/data/2.5/weather?q=London&appid=50bb086d1ad4c62c3ce2a0a515596674")
@@ -64,7 +64,22 @@ class ListTableViewController: UITableViewController {
     
     private func setupNotifications() {
         
-         NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.CityWasFetched, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.CityWasFetched, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(senderErrorWeather), name: NSNotification.Name.ErrorAddCity, object: nil)
+    }
+    
+    @objc func senderErrorWeather () {
+        let alertController = UIAlertController(title: "Такого города не существует, попробуйте еще раз", message: nil, preferredStyle: .alert)
+        let alertInstall = UIAlertAction(title: "Ок", style: .default) { (action) in
+           // self.addNewCityButton(UIBarButtonItem.init())
+        }
+        alertController.addAction(alertInstall)
+      
+        
+        present(alertController, animated: true, completion: nil)
+    
+        
     }
     
     private func configureData() {
@@ -77,26 +92,26 @@ class ListTableViewController: UITableViewController {
         configureData()
     }
     
-
-//    //получили координаты и еще раз привязали правильное имя города
-//    func addCities () {
-//        getCityWeather(citiesArray: self.nameCitiesArray) { (index, weatherMain) in
-//
-//
-//
-//
-//            DispatchQueue.main.async { //так как таблица у нас прогружается раньше чем мы получаем данные, добавили обновление таблицы в основной поток
-//                print(self.nameCitiesArray)
-//
-//
-//
-//                self.citiesArray[index] = weatherMain
-//                self.citiesArray[index].name = self.nameCitiesArray[index]
-//                self.tableView.reloadData()
-//            }
-//
-//        }
-//    }
+    
+    //    //получили координаты и еще раз привязали правильное имя города
+    //    func addCities () {
+    //        getCityWeather(citiesArray: self.nameCitiesArray) { (index, weatherMain) in
+    //
+    //
+    //
+    //
+    //            DispatchQueue.main.async { //так как таблица у нас прогружается раньше чем мы получаем данные, добавили обновление таблицы в основной поток
+    //                print(self.nameCitiesArray)
+    //
+    //
+    //
+    //                self.citiesArray[index] = weatherMain
+    //                self.citiesArray[index].name = self.nameCitiesArray[index]
+    //                self.tableView.reloadData()
+    //            }
+    //
+    //        }
+    //    }
     
     
     //MARK: - Table view data source
@@ -113,6 +128,7 @@ class ListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as! ListCell
+        
         
         if isFiltering {
             cell.configure(weather: filterCityArray[indexPath.row])
@@ -148,10 +164,10 @@ class ListTableViewController: UITableViewController {
             let textField = alertController.textFields?.first
             guard let text = textField?.text else { return }
             
-        
-
-//            self.citiesManager.citiesArray.append(text)
-//            self.citiesManager.citiesWeather.append(self.emptyCity)
+            
+            
+            //            self.citiesManager.citiesArray.append(text)
+            //            self.citiesManager.citiesWeather.append(self.emptyCity)
             CitiesWeatherManager.shared.citiesArray.append(text)
         }
         alertController.addTextField { (textField) in
@@ -164,29 +180,23 @@ class ListTableViewController: UITableViewController {
         alertController.addAction(alertCancel)
         
         present(alertController, animated: true, completion: nil)
-      
+        
+       
+        
         
     }
     
     ///удаляем свайпом из тейбл вью
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
+        
         let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [self] (_, _, complitionHandler) in
-
-            let edditingRow = CitiesWeatherManager.shared.citiesArray[indexPath.row]
-
-            if let index = CitiesWeatherManager.shared.citiesArray.firstIndex(of: edditingRow) {
-                if self.isFiltering {
-                    self.filterCityArray.remove(at: index)
-                } else {
-                   // self.citiesArray.remove(at: index)
-                    CitiesWeatherManager.shared.citiesArray.remove(at: index)
-
-                }
-
-            }
-
-            self.tableView.reloadData()
+            
+     
+            let edditingRow = isFiltering ? filterCityArray[indexPath.row] : citiesArray[indexPath.row]
+            
+            CitiesWeatherManager.shared.citiesArray.removeAll { $0 == edditingRow.name }
+            
+            
         }
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }

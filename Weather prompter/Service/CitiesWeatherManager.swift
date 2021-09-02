@@ -48,6 +48,8 @@ class CitiesWeatherManager {
         }
     }
     
+    
+    
     // MARK: - Init
     
     init() {
@@ -63,6 +65,7 @@ class CitiesWeatherManager {
         return getWeatherFor(cityName: selectedCity)
     }
     
+
     // MARK: - Private methods
     
     /// Находим погоду по имени города

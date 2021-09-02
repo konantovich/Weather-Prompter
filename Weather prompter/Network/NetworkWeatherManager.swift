@@ -7,16 +7,29 @@
 
 import Foundation
 import CoreLocation
+import UIKit
 
 class NetworkWeatherManager2 {
     
     static let shared = NetworkWeatherManager2()
+ 
     
     // MARK: - Public methods
     
     //берем данные по погоде в зависимости от название города
     func getCityWeather(cityName: String, completionHandler: @escaping (WeatherModel) -> Void) {
         getCoordinateFrom(city: cityName) { (coordinate, error) in//получаем координаты
+            
+            
+            
+            if let error = error {
+                print("error add city", error.localizedDescription)
+               
+                NotificationCenter.default.post(name: NSNotification.Name.ErrorAddCity, object: nil)
+           
+            }
+           
+            
             guard let coordinate = coordinate, error == nil else {return}
             
             //подставляем координаты в fetchWeather
@@ -40,7 +53,11 @@ class NetworkWeatherManager2 {
            request.httpMethod = "GET"
            
            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            
+            
+            
             guard let data = data else {   return }
+            
             
                   // print(String(describing: error))
                //print(String(data: data, encoding: .utf8)!)
@@ -72,8 +89,13 @@ class NetworkWeatherManager2 {
     //получаем координаты города по названию города
     private func getCoordinateFrom(city: String, completion: @escaping (_ coordinate: CLLocationCoordinate2D?, _ error: Error?)-> ()) {
         CLGeocoder().geocodeAddressString(city) { (placemark, error) in
+            
             completion(placemark?.first?.location?.coordinate, error)
         }
     }
+    
+    
+    
+
 }
 

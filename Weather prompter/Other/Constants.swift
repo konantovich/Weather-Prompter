@@ -15,4 +15,6 @@ extension Notification.Name {
     
     static let CityWasFetched = Notification.Name("kCityWasFetched")
     static let SelectedCityWasChanged = Notification.Name("kSelectedCityWasChanged")
+    static let ErrorAddCity = Notification.Name("kErrorAddCity")
+    
 }

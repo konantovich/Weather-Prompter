@@ -125,7 +125,14 @@ class ListTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        CitiesWeatherManager.shared.selectedCity = citiesArray[indexPath.row].name
+        if isFiltering {
+            CitiesWeatherManager.shared.selectedCity = filterCityArray[indexPath.row].name
+            dismiss(animated: true, completion: nil)
+        } else {
+            CitiesWeatherManager.shared.selectedCity = citiesArray[indexPath.row].name
+        }
+        
+        
         
         dismiss(animated: true, completion: nil)
     }
@@ -134,70 +141,62 @@ class ListTableViewController: UITableViewController {
     
     //добавляем новый город (алертом)
     @IBAction func addNewCityButton(_ sender: UIBarButtonItem) {
-//        
-//        let alertController = UIAlertController(title: "Введите название города", message: nil, preferredStyle: .alert)
-//        let alertInstall = UIAlertAction(title: "Ок", style: .default) { (action) in
-//            
-//            let textField = alertController.textFields?.first
-//            guard let text = textField?.text else { return }
-//            //  self.newCity = text
-//            
+        
+        let alertController = UIAlertController(title: "Введите название города", message: nil, preferredStyle: .alert)
+        let alertInstall = UIAlertAction(title: "Ок", style: .default) { (action) in
+            
+            let textField = alertController.textFields?.first
+            guard let text = textField?.text else { return }
+            
+        
+
 //            self.citiesManager.citiesArray.append(text)
-//        
-//
 //            self.citiesManager.citiesWeather.append(self.emptyCity)
-//            self.tableView.reloadData()
-//            
-//            //print(self.nameCitiesArray)
-//         //   self.addCities()
-//            print("Добавили новый город:" + self.newCity)
-//            
-//            
-//          
-//            
-//            
-//        }
-//        alertController.addTextField { (textField) in
-//            textField.placeholder = self.newCity
-//        }
-//        
-//        let alertCancel = UIAlertAction(title: "Отменить", style: .cancel, handler: nil)
-//        
-//        alertController.addAction(alertInstall)
-//        alertController.addAction(alertCancel)
-//        
-//        present(alertController, animated: true, completion: nil)
-//        self.tableView.reloadData()
+            CitiesWeatherManager.shared.citiesArray.append(text)
+            DispatchQueue.main.async {
+               
+                self.configureData()
+                self.tableView.reloadData()
+            }
+            
+            
+        }
+        alertController.addTextField { (textField) in
+            textField.placeholder = ""
+        }
+        
+        let alertCancel = UIAlertAction(title: "Отменить", style: .cancel, handler: nil)
+        
+        alertController.addAction(alertInstall)
+        alertController.addAction(alertCancel)
+        
+        present(alertController, animated: true, completion: nil)
+      
         
     }
     
-    //удаляем свайпом из тейбл вью
-//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//
-//        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [self] (_, _, complitionHandler) in
-//
-//            let edditingRow = citiesArray[indexPath.row]
-//
-//            if let index = citiesManager.citiesArray.firstIndex(of: edditingRow) {
-//                if self.isFiltering {
-//                    self.filterCityArray.remove(at: index)
-//                } else {
-//                    self.citiesArray.remove(at: index)
-//                    citiesManager.citiesArray.remove(at: index)
-//
-//                    let defaults = UserDefaults.standard
-//                    defaults.set(citiesManager.citiesArray, forKey: "SavedStringArray")
-//                    defaults.synchronize()
-//
-//
-//                }
-//
-//            }
-//
-//            tableView.reloadData()
-//        }
-//        return UISwipeActionsConfiguration(actions: [deleteAction])
-//    }
+    ///удаляем свайпом из тейбл вью
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [self] (_, _, complitionHandler) in
+
+            let edditingRow = CitiesWeatherManager.shared.citiesArray[indexPath.row]
+
+            if let index = CitiesWeatherManager.shared.citiesArray.firstIndex(of: edditingRow) {
+                if self.isFiltering {
+                    self.filterCityArray.remove(at: index)
+                } else {
+                   // self.citiesArray.remove(at: index)
+                    CitiesWeatherManager.shared.citiesArray.remove(at: index)
+
+                }
+
+            }
+
+            self.tableView.reloadData()
+        }
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
 }
 
 

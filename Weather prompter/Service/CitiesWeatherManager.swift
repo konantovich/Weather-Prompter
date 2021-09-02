@@ -76,6 +76,7 @@ class CitiesWeatherManager {
         return nil
     }
     
+    //// Находим погоду для всех городов
     private func getAllCitiesWeather() {
         
         citiesWeather = []
@@ -85,7 +86,7 @@ class CitiesWeatherManager {
         }
     }
     
-    //берем данные по погоде в зависимости от названия города
+    ///берем данные по погоде в зависимости от названия города
     private func getWeatherForCity(cityName: String) {
         
         NetworkWeatherManager2.shared.getCityWeather(cityName: cityName) { weather in
@@ -94,7 +95,7 @@ class CitiesWeatherManager {
             newWeather.name = cityName
             self.citiesWeather.append(newWeather)
             
-            NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: self)
+            NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: newWeather)
         }
     }
 }

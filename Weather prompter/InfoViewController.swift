@@ -74,8 +74,8 @@ class InfoViewController: UIViewController {
         averageTemp.text = "\((Int(weatherModel.tempMax) + Int(weatherModel.tempMin)) / 2)"
         pressureLabel.text = "\(Int(weatherModel.presureMm))"
         
-        windSpeedLabel.backgroundColor = windIndicator(wind: Int(weatherModel.windSpeed ?? 10))
-        humidity.backgroundColor = weatherHumidity(weatherHumidity: weatherModel.humidity ?? 100)
+        windSpeedLabel.backgroundColor = windIndicator(wind: Int(weatherModel.windSpeed ))
+        humidity.backgroundColor = weatherHumidity(weatherHumidity: weatherModel.humidity)
         
         // подключил картинку .png по API ссылке
         let url = URL(string: "https://openweathermap.org/img/wn/\((weatherModel.conditionCodeIcon))@2x.png")

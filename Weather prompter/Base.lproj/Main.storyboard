@@ -92,7 +92,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KE0-2C-HgX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3328" y="62"/>
+            <point key="canvasLocation" x="4237.68115942029" y="61.607142857142854"/>
         </scene>
         <!--Info View Controller-->
         <scene sceneID="j3o-N9-Jqd">
@@ -363,7 +363,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <segue destination="4mt-Yv-8j0" kind="show" id="2EI-K4-ceh"/>
+                                    <segue destination="EbH-D6-Y3F" kind="show" id="2EI-K4-ceh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -397,6 +397,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="g7P-TQ-WKP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2662.3188405797105" y="61.607142857142854"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="MsM-FK-GEw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="EbH-D6-Y3F" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="HGi-fV-c8x"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="lir-Yz-EHA">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4mt-Yv-8j0" kind="relationship" relationship="rootViewController" id="UBz-wu-xGg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E0Y-44-bK1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3327.5362318840585" y="61.607142857142854"/>
         </scene>
     </scenes>
     <resources>

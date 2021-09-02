@@ -66,6 +66,7 @@ class InfoViewController: UIViewController {
     
     @objc func senderWeather () {
         DispatchQueue.main.async { [self] in
+           
             self.nameCitiesArray = citiesManager.citiesArray
             self.weatherModel = citiesManager.citiesWeather[0]
         print("adsasd", citiesManager.citiesWeather[0].feelsLike)
@@ -109,12 +110,6 @@ class InfoViewController: UIViewController {
     
 }
 
-
-// MARK: - Networking
-
-extension InfoViewController {
-    
-}
 
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource

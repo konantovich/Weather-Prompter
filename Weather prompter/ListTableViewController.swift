@@ -69,7 +69,7 @@ class ListTableViewController: UITableViewController {
     
     private func configureData() {
         
-        self.citiesArray = CitiesWeatherManager.shared.citiesWeather
+        self.citiesArray = CitiesWeatherManager.shared.citiesWeather.sorted { $0.name < $1.name }
         tableView.reloadData()
     }
     

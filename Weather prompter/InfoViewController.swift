@@ -21,12 +21,8 @@ class InfoViewController: UIViewController {
     
     @IBOutlet weak var testImage: UIImageView!
     var weatherModel: WeatherModel?
-    var citiesManager = CitiesWeatherManager()
     
     let imageCell = ["1", "2", "3"]
-    
-    var nameCities = "Киев"
-    var nameCitiesArray = ["Москва", "Киев", "Берлин", "Харьков", "Лондон"]
     
     var currentColor = 0
     var colors = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green]
@@ -41,10 +37,7 @@ class InfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       
-        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.init(rawValue: "red"), object: nil)
-        
-        
+        setupNotifications()
 //        getWeatherForCity(cityName: "Киев")
         
         view.addVerticalGradientLayer(topColor: primaryColor, bottomColor: secondaryColor)
@@ -55,49 +48,37 @@ class InfoViewController: UIViewController {
         self.clotheCollectionView.delegate = self
         self.clotheCollectionView.dataSource = self
         
+        configureData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        
-        
     }
     
-    @objc func senderWeather () {
-        DispatchQueue.main.async { [self] in
-           
-            self.nameCitiesArray = citiesManager.citiesArray
-            self.weatherModel = citiesManager.citiesWeather[0]
-        print("adsasd", citiesManager.citiesWeather[0].feelsLike)
-            refreshLabels()
-        
-        }
-       
-     //  print(citiesManager.getWeatherForCity(cityName: nameCities))
-        
-        
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - Configure View
     
-    func refreshLabels() {
+    func refreshView() {
         
-        nameLabel.text = weatherModel?.name
-        descriptionLabel.text = weatherModel!.weatherDescription
-        tempLabel.text = "\(Int((weatherModel?.temp)!))" + "°C" + "\n" + " ощущается как " + "\(Int((weatherModel?.feelsLike)!))" + "°C"
-        windSpeedLabel.text = "\(Int(weatherModel!.windSpeed))"
-        humidity.text = "\(Int(weatherModel!.humidity))"
-        averageTemp.text = "\((Int(weatherModel!.tempMax) + Int(weatherModel!.tempMin)) / 2)"
-        pressureLabel.text = "\(Int(weatherModel!.presureMm))"
+        guard let weatherModel = weatherModel else { return }
         
+        nameLabel.text = weatherModel.name
+        descriptionLabel.text = weatherModel.weatherDescription
+        tempLabel.text = "\(Int((weatherModel.temp)))" + "°C" + "\n" + " ощущается как " + "\(Int((weatherModel.feelsLike)))" + "°C"
+        windSpeedLabel.text = "\(Int(weatherModel.windSpeed))"
+        humidity.text = "\(Int(weatherModel.humidity))"
+        averageTemp.text = "\((Int(weatherModel.tempMax) + Int(weatherModel.tempMin)) / 2)"
+        pressureLabel.text = "\(Int(weatherModel.presureMm))"
         
-        windSpeedLabel.backgroundColor = windIndicator(wind: Int(weatherModel?.windSpeed ?? 10))
-        humidity.backgroundColor = weatherHumidity(weatherHumidity: weatherModel?.humidity ?? 100)
-        
+        windSpeedLabel.backgroundColor = windIndicator(wind: Int(weatherModel.windSpeed ?? 10))
+        humidity.backgroundColor = weatherHumidity(weatherHumidity: weatherModel.humidity ?? 100)
         
         // подключил картинку .png по API ссылке
-        let url = URL(string: "https://openweathermap.org/img/wn/\((weatherModel!.conditionCodeIcon))@2x.png")
+        let url = URL(string: "https://openweathermap.org/img/wn/\((weatherModel.conditionCodeIcon))@2x.png")
         //print("https://openweathermap.org/img/wn/\((weatherModel!.conditionCodeIcon))@2x.png")
         DispatchQueue.global().async {
             guard let data = try? Data(contentsOf: url!) else { return }//make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
@@ -107,7 +88,23 @@ class InfoViewController: UIViewController {
         }
     }
     
+    private func setupNotifications() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.CityWasFetched, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.SelectedCityWasChanged, object: nil)
+    }
     
+    private func configureData() {
+        
+        self.weatherModel = CitiesWeatherManager.shared.getWeatherForCurrentCity()
+        refreshView()
+    }
+    
+    // MARK: - Actions
+    
+    @objc func senderWeather() {
+        configureData()
+    }
 }
 
 

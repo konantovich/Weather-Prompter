@@ -44,6 +44,7 @@ class CitiesWeatherManager {
             let defaults = UserDefaults.standard
             defaults.set(newValue, forKey: "citiesArray")
             defaults.synchronize()
+            getAllCitiesWeather()
         }
     }
     

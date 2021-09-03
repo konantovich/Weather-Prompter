@@ -12,7 +12,7 @@ class CitiesWeatherManager {
     static let shared = CitiesWeatherManager()
     
     // Public properties
-    var citiesWeather: [WeatherModel] = []
+    var allCitiesWeather: [WeatherModel] = []
     
     /// Выбранный город
     var selectedCity: String {
@@ -30,7 +30,7 @@ class CitiesWeatherManager {
     }
     
     /// Список всех городов
-    var citiesArray: [String] {
+    var allCitiesArray: [String] {
         
         get {//достаем значение
             let defaults = UserDefaults.standard
@@ -60,18 +60,19 @@ class CitiesWeatherManager {
     // MARK: - Public methods
     
     /// Находим погоду для текущего выбраного города
-    func getWeatherForCurrentCity() -> WeatherModel? {
-        
-        return getWeatherFor(cityName: selectedCity)
+    func getWeatherForSelectedCity() -> WeatherModel? {
+        print(selectedCity)
+       
+        return getWeatherForCityName(cityName: selectedCity)
     }
     
 
     // MARK: - Private methods
     
     /// Находим погоду по имени города
-    private func getWeatherFor(cityName: String) -> WeatherModel? {
+    private func getWeatherForCityName(cityName: String) -> WeatherModel? {
         
-        for city in citiesWeather {
+        for city in allCitiesWeather {
             if city.name == cityName {
                 return city
             }
@@ -83,9 +84,9 @@ class CitiesWeatherManager {
     //// Находим погоду для всех городов
     private func getAllCitiesWeather() {
         
-        citiesWeather = []
+        allCitiesWeather = []
         
-        for city in citiesArray {
+        for city in allCitiesArray {
             getWeatherForCity(cityName: city)
         }
     }
@@ -95,11 +96,14 @@ class CitiesWeatherManager {
         
         NetworkWeatherManager2.shared.getCityWeather(cityName: cityName) { weather in
             
+        
+            
             var newWeather = weather
             newWeather.name = cityName
-            self.citiesWeather.append(newWeather)
+            self.allCitiesWeather.append(newWeather)
+            NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: nil)
             
-            NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: newWeather)
+           
         }
     }
 }

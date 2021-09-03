@@ -66,7 +66,7 @@ class ListTableViewController: UITableViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.CityWasFetched, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(senderErrorWeather), name: NSNotification.Name.ErrorAddCity, object: nil)
+    //    NotificationCenter.default.addObserver(self, selector: #selector(senderErrorWeather), name: NSNotification.Name.ErrorAddCity, object: nil)
     }
     
     @objc func senderErrorWeather () {
@@ -84,7 +84,7 @@ class ListTableViewController: UITableViewController {
     
     private func configureData() {
         
-        self.citiesArray = CitiesWeatherManager.shared.citiesWeather.sorted { $0.name < $1.name }
+        self.citiesArray = CitiesWeatherManager.shared.allCitiesWeather.sorted { $0.name < $1.name }
         tableView.reloadData()
     }
     
@@ -139,6 +139,7 @@ class ListTableViewController: UITableViewController {
         return cell
     }
     
+    //по нажатию на ячейку
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if isFiltering {
@@ -146,6 +147,9 @@ class ListTableViewController: UITableViewController {
             dismiss(animated: true, completion: nil)
         } else {
             CitiesWeatherManager.shared.selectedCity = citiesArray[indexPath.row].name
+            
+           
+            
         }
         
         
@@ -168,7 +172,10 @@ class ListTableViewController: UITableViewController {
             
             //            self.citiesManager.citiesArray.append(text)
             //            self.citiesManager.citiesWeather.append(self.emptyCity)
-            CitiesWeatherManager.shared.citiesArray.append(text)
+            CitiesWeatherManager.shared.allCitiesArray.append(text)
+            print(" CitiesWeatherManager.shared.allCitiesArray after add : ", CitiesWeatherManager.shared.allCitiesArray)
+            
+            self.tableView.reloadData()
         }
         alertController.addTextField { (textField) in
             textField.placeholder = ""
@@ -194,9 +201,8 @@ class ListTableViewController: UITableViewController {
      
             let edditingRow = isFiltering ? filterCityArray[indexPath.row] : citiesArray[indexPath.row]
             
-            CitiesWeatherManager.shared.citiesArray.removeAll { $0 == edditingRow.name }
-            
-            
+            CitiesWeatherManager.shared.allCitiesArray.removeAll { $0 == edditingRow.name }
+          
         }
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }

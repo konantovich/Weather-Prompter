@@ -20,7 +20,7 @@ class InfoViewController: UIViewController {
     @IBOutlet weak var averageTemp: UILabel!
     
     @IBOutlet weak var testImage: UIImageView!
-    var weatherModel: WeatherModel?
+    var selectedWeatherModel: WeatherModel?
     
     let imageCell = ["1", "2", "3"]
     
@@ -70,7 +70,7 @@ class InfoViewController: UIViewController {
     
     func refreshView() {
         
-        guard let weatherModel = weatherModel else { return }
+        guard let weatherModel = selectedWeatherModel else { return }
         
         nameLabel.text = weatherModel.name
         descriptionLabel.text = weatherModel.weatherDescription
@@ -101,15 +101,18 @@ class InfoViewController: UIViewController {
     }
     
     private func configureData() {
-        
-        self.weatherModel = CitiesWeatherManager.shared.getWeatherForCurrentCity()
+        //print(self.selectedWeatherModel)
+        self.selectedWeatherModel = CitiesWeatherManager.shared.getWeatherForSelectedCity()
         refreshView()
     }
     
     // MARK: - Actions
     
     @objc func senderWeather() {
-        configureData()
+       
+        self.selectedWeatherModel = CitiesWeatherManager.shared.getWeatherForSelectedCity()
+        print("sender weather", self.selectedWeatherModel)
+        refreshView()
     }
 }
 
@@ -121,7 +124,7 @@ class InfoViewController: UIViewController {
 extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSource  {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        if weatherModel == nil {
+        if selectedWeatherModel == nil {
             return 3
         } else {
             return imageCell.count
@@ -142,13 +145,13 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
         switch imageCell {
         case "1":
             cell.backgroundColor = .none
-            cell.clotheImage.image = jacketClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
+            cell.clotheImage.image = jacketClotheTemperature(temp: Double(selectedWeatherModel?.feelsLike ?? 0))
         case "2":
             cell.backgroundColor = .none
-            cell.clotheImage.image = pantsClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
+            cell.clotheImage.image = pantsClotheTemperature(temp: Double(selectedWeatherModel?.feelsLike ?? 0))
         case "3":
             cell.backgroundColor = .none
-            cell.clotheImage.image = bootsClotheTemperature(temp: Double(weatherModel?.feelsLike ?? 0))
+            cell.clotheImage.image = bootsClotheTemperature(temp: Double(selectedWeatherModel?.feelsLike ?? 0))
         default:
             cell.backgroundColor = .green
         }
@@ -233,8 +236,8 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
     
     func advice () {
         
-        let weatherTemp = weatherModel?.feelsLike ?? 10
-        let wearherWind = weatherModel?.windSpeed ?? 10
+        let weatherTemp = selectedWeatherModel?.feelsLike ?? 10
+        let wearherWind = selectedWeatherModel?.windSpeed ?? 10
         
         print(wearherWind)
         

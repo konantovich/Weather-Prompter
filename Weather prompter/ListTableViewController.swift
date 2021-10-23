@@ -41,7 +41,7 @@ class ListTableViewController: UITableViewController {
         
         //addCities()
         
-
+        
         
         //   networkWeatherManager.fetchWeather { (weatherMain) in print(weatherMain)}
         print("api.openweathermap.org/data/2.5/weather?q=London&appid=50bb086d1ad4c62c3ce2a0a515596674")
@@ -66,18 +66,26 @@ class ListTableViewController: UITableViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(senderWeather), name: NSNotification.Name.CityWasFetched, object: nil)
         
-    //    NotificationCenter.default.addObserver(self, selector: #selector(senderErrorWeather), name: NSNotification.Name.ErrorAddCity, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(senderErrorWeather), name: NSNotification.Name.ErrorAddCity, object: nil)
     }
     
     @objc func senderErrorWeather () {
-        let alertController = UIAlertController(title: "Такого города не существует, попробуйте еще раз", message: nil, preferredStyle: .alert)
-        let alertInstall = UIAlertAction(title: "Ок", style: .default) { (action) in
-           // self.addNewCityButton(UIBarButtonItem.init())
-        }
-        alertController.addAction(alertInstall)
       
+        CitiesWeatherManager.shared.allCitiesArray.removeLast()
+
+ 
+            let alertController = UIAlertController(title: "Такого города не существует, попробуйте ввести еще раз", message: nil, preferredStyle: .alert)
+            let alertInstall = UIAlertAction(title: "Ок", style: .default) { (action) in
+               // self.addNewCityButton(UIBarButtonItem.init())
+              //  self.configureData()
+            }
+            alertController.addAction(alertInstall)
+          
+            
+            present(alertController, animated: true, completion: nil)
+    
         
-        present(alertController, animated: true, completion: nil)
+       
     
         
     }
@@ -121,6 +129,7 @@ class ListTableViewController: UITableViewController {
         if isFiltering {
             return filterCityArray.count
         }
+        //        CitiesWeatherManager.shared.allCitiesArray.count
         return citiesArray.count
     }
     
@@ -172,10 +181,32 @@ class ListTableViewController: UITableViewController {
             
             //            self.citiesManager.citiesArray.append(text)
             //            self.citiesManager.citiesWeather.append(self.emptyCity)
-            CitiesWeatherManager.shared.allCitiesArray.append(text)
-            print(" CitiesWeatherManager.shared.allCitiesArray after add : ", CitiesWeatherManager.shared.allCitiesArray)
             
-            self.tableView.reloadData()
+            
+            print("CitiesWeatherManager.shared.allCitiesArray", CitiesWeatherManager.shared.allCitiesArray)
+            
+            
+            if let city = CitiesWeatherManager.shared.allCitiesArray.firstIndex(of: "\(text)") {
+               // CitiesWeatherManager.shared.allCitiesArray.remove(at: city)
+                
+                let alertControllerDublicat = UIAlertController(title:"Город уже добавлен", message: nil, preferredStyle: .alert)
+                let alertDublicatCity = UIAlertAction(title: "Ок", style: .cancel, handler: nil)
+                alertControllerDublicat.addAction(alertDublicatCity)
+                self.present(alertControllerDublicat, animated: true, completion: nil)
+                
+            } else {
+                CitiesWeatherManager.shared.allCitiesArray.append(text)
+                
+                
+                print(" CitiesWeatherManager.shared.allCitiesArray after add : ", CitiesWeatherManager.shared.allCitiesArray)
+                
+                self.tableView.reloadData()
+            }
+            
+            
+           
+          
+           
         }
         alertController.addTextField { (textField) in
             textField.placeholder = ""
@@ -201,8 +232,12 @@ class ListTableViewController: UITableViewController {
      
             let edditingRow = isFiltering ? filterCityArray[indexPath.row] : citiesArray[indexPath.row]
             
-            CitiesWeatherManager.shared.allCitiesArray.removeAll { $0 == edditingRow.name }
-          
+           // CitiesWeatherManager.shared.allCitiesArray.removeAll { $0 == edditingRow.name }
+            if CitiesWeatherManager.shared.allCitiesArray != [] {
+                CitiesWeatherManager.shared.allCitiesArray.removeAll { $0 == edditingRow.name }
+               
+            }
+         
         }
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }

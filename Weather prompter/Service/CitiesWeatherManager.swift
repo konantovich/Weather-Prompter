@@ -61,7 +61,7 @@ class CitiesWeatherManager {
     
     /// Находим погоду для текущего выбраного города
     func getWeatherForSelectedCity() -> WeatherModel? {
-        print(selectedCity)
+        print("Selected city: ", selectedCity)
        
         return getWeatherForCityName(cityName: selectedCity)
     }
@@ -94,16 +94,20 @@ class CitiesWeatherManager {
     ///берем данные по погоде в зависимости от названия города
     private func getWeatherForCity(cityName: String) {
         
-        NetworkWeatherManager2.shared.getCityWeather(cityName: cityName) { weather in
+        NetworkWeatherManager2.shared.getCityWeather(cityName: cityName) { result in
             
-        
+            switch result {
             
-            var newWeather = weather
-            newWeather.name = cityName
-            self.allCitiesWeather.append(newWeather)
-            NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: nil)
-            
-           
+            case .success(let weather):
+                var newWeather = weather
+                newWeather.name = cityName
+                self.allCitiesWeather.append(newWeather)
+                NotificationCenter.default.post(name: NSNotification.Name.CityWasFetched, object: nil)
+            case .failure(let error):
+                print("error get weather for city: ", error)
+                NotificationCenter.default.post(name: NSNotification.Name.ErrorAddCity, object: nil)
+            }
+
         }
     }
 }

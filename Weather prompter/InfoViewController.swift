@@ -45,6 +45,7 @@ class InfoViewController: UIViewController {
         
         
         setupNotifications()
+        
 //        getWeatherForCity(cityName: "Киев")
         
         view.addVerticalGradientLayer(topColor: primaryColor, bottomColor: secondaryColor)
@@ -112,6 +113,7 @@ class InfoViewController: UIViewController {
         //print(self.selectedWeatherModel)
         self.selectedWeatherModel = CitiesWeatherManager.shared.getWeatherForSelectedCity()
         refreshView()
+       
     }
     
     // MARK: - Actions
@@ -121,6 +123,7 @@ class InfoViewController: UIViewController {
         self.selectedWeatherModel = CitiesWeatherManager.shared.getWeatherForSelectedCity()
        // print("selectedWeatherModel", self.selectedWeatherModel)
         refreshView()
+        setupCollectionView()
     }
 }
 
@@ -142,8 +145,10 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CollectionViewCell
         
+      
+        var selectedWeatherTemp = setupCollectionView()
         
-        
+        print("selectedWeatherModel", selectedWeatherModel)
         
         cell.backgroundColor = .red
         
@@ -155,7 +160,8 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
                       switch imageCell {
                       case "1":
                           cell.backgroundColor = .none
-                          cell.clotheImage.image = self.jacketClotheTemperature(temp: Double(self.selectedWeatherModel?.feelsLike ?? 0))
+                          cell.clotheImage.image = self.jacketClotheTemperature(temp: Double(selectedWeatherTemp))
+                        
                       case "2":
                           cell.backgroundColor = .none
                           cell.clotheImage.image = self.pantsClotheTemperature(temp: Double(self.selectedWeatherModel?.feelsLike ?? 0))
@@ -175,6 +181,20 @@ extension InfoViewController : UICollectionViewDelegate, UICollectionViewDataSou
         
         
         return cell
+    }
+    
+    
+    func setupCollectionView () -> Int {
+        
+        guard let selectedWeather = selectedWeatherModel?.feelsLike else {return 0}
+        
+        print("setupCollectionView ()", selectedWeather)
+        
+        
+        return Int(selectedWeather)
+        
+        
+        
     }
     
     
